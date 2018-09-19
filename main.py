@@ -37,16 +37,16 @@ add_form = """
 # Name the action for the form '/crossoff' and make its method 'post'.
 
 # a form for crossing off watched movies
+
 crossoff_form = """
     <form action ="/crossoff" method="post">
-        <label for=""remove-movie">
-            I want to remove
-            <input type="text" id="remove-movie" name="crossed-off-movie"/>
-            from my watchlist
-        </label>
+        <select name="crossed-off-movie">
+            {dropdown_items}
+        </select>
         <input type="submit" value="Remove It"/>
     </form>
 """
+movie_list=[]
 
 # TODO:
 # Finish filling in the function below so that the user will see a message like:
@@ -70,19 +70,30 @@ def add_movie():
     # build response content
     new_movie_element = "<strong>" + new_movie + "</strong>"
     sentence = new_movie_element + " has been added to your Watchlist!"
+    movie_list.append(new_movie)
     content = page_header + "<p>" + sentence + "</p>" + page_footer
-
+    added_movies=""
+    for i in range(len(movie_list)):
+        added_movies+="<li>" + movie_list[i]+ "</li>"
+    content+=added_movies
     return content
 
+def get_dropdown_options():
+    dropdown=""
+    option_html="<option>{movie}</option>"
+    for i in range (len(movie_list)):
+        dropdown+=option_html.format(movie=movie_list[i])
+    return dropdown
 
 @app.route("/")
 def index():
     edit_header = "<h2>Edit My Watchlist</h2>"
 
     # build the response string
-    content = page_header + edit_header + add_form + crossoff_form+page_footer
+    content = page_header + edit_header + add_form + crossoff_form.format(dropdown_items=get_dropdown_options()) + page_footer
+   
 
-
+    
     return content
 
 
